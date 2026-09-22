@@ -58,7 +58,6 @@ export const find = async ({
 export const findById = async ({
   id,
   options,
-  select,
   model
 }) => {
   const doc = model.findById(id)

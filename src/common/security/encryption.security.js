@@ -8,6 +8,7 @@ let encryptData = cipher.update(plainText , "utf-8" , "hex")
 encryptData+= cipher.final("hex")
 console.log({iv,cipher , encryptData});
 return`${iv.toString("hex")}::${encryptData}`
+
 }
 
 

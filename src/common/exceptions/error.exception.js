@@ -1,51 +1,60 @@
 
 export const ApplicationException = ({
-    message="error",
-    options={
-        cause:{status:400}
-    }
-}={})=>{
+    message = "error",
+    status = 404,
+    issues = undefined
+} = {}) => {
 
-throw new Error(message , options)
-}
+    const error = new Error(message);
+
+    error.cause = {
+        status,
+        issues
+    };
+
+    throw error;
+};
 
 
-export const ConflictException = (message="conflict" , issues={})=>{
+export const ConflictException = (message="conflict" ,issues= undefined)=>{
    return ApplicationException({
     message,
-    options:{
-        cause:{status:409 , ...issues}
-    }
+    status:409,
+    issues
 })
 }
 
 
 
-export const NotfoundException = (message="Notfound" , issues={})=>{
+export const NotfoundException = (message="Notfound" , issues= undefined)=>{
    return ApplicationException({
     message,
-    options:{
-        cause:{status:404 , ...issues}
-    }
+    status:404,
+    issues
+})
+}
+
+export const BadException = (message="Bad request exception" , issues= undefined)=>{
+   return ApplicationException({
+    message,
+    status:400,
+    issues
 })
 }
 
 
-
-export const UnauthorizedException = (message="Unauthorized" , issues={})=>{
+export const UnauthorizedException = (message="Unauthorized" , issues= undefined)=>{
    return ApplicationException({
     message,
-    options:{
-        cause:{status:401 , ...issues}
-    }
+    status:401,
+    issues
 })
 }
 
-export const ForbiddenException = (message="Forbidden" , issues={})=>{
+export const ForbiddenException = (message="Forbidden" , issues= undefined)=>{
    return ApplicationException({
     message,
-    options:{
-        cause:{status:403 , ...issues}
-    }
+    status:403,
+    issues
 })
 }

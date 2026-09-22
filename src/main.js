@@ -3,16 +3,10 @@ import {globalErrorHandling} from './middleware/index.js'
 import express from 'express'
 import { PORT } from './config.js'
 import { bootstarpDB } from './DB/connection.db.js'
-import { log } from 'node:console'
-import { decryption, encryption } from './common/security/encryption.security.js'
-const encValue = await encryption("mahmoud")
-
-const plain = decryption(encValue)
-console.log({encValue , plain});
-
+import cors from 'cors'
 const app = express()
 bootstarpDB(app,PORT)
-
+app.use(cors())
 
 // convert buffer data
 app.use(express.json())
@@ -33,6 +27,3 @@ app.all("{/*dummy}" ,(req,res,next)=>{
 
 // error middleware
 app.use(globalErrorHandling);
-
-
-

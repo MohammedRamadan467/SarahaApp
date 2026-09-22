@@ -11,4 +11,4 @@ export const globalErrorHandling = (error , req ,res , next)=>{
         cause:error.cause,
          error:NODE_ENV == "development"? error : undefined ,
         stack:NODE_ENV == "development"? error.stack : undefined})
-}
+}   
