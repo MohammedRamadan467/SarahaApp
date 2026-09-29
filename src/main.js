@@ -4,8 +4,11 @@ import express from 'express'
 import { PORT } from './config.js'
 import { bootstarpDB } from './DB/connection.db.js'
 import cors from 'cors'
+import { client } from './DB/model/redis.connection.js'
+import { del, exist, get, keys, mget, set, ttl, update } from './common/services/index.js'
 const app = express()
-bootstarpDB(app,PORT)
+await bootstarpDB(app,PORT)
+
 app.use(cors())
 
 // convert buffer data

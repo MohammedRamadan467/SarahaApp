@@ -1,11 +1,28 @@
 import jwt from "jsonwebtoken";
 import { ACCESS_ADMIN_TOKEN_SIGNUTURE, ACCESS_TOKEN_EXPIRES_IN, ACCESS_USER_TOKEN_SIGNUTURE, REFRESH_ADMIN_TOKEN_SIGNUTURE, REFRESH_TOKEN_EXPIRES_IN, REFRESH_USER_TOKEN_SIGNUTURE } from "../../config.js";
-import { BadException, NotfoundException } from "../exceptions/error.exception.js";
+import { BadException, NotfoundException, UnauthorizedException } from "../exceptions/error.exception.js";
 import { findById, findOne } from "../repository/base.repository.js";
 import { UserModel } from "../../DB/model/user.model.js";
 import { tokenTypeEnum } from "../enum/security.enum.js";
 import { RoleEnum } from "../enum/user.enum.js";
 import { compare } from "./hash.security.js";
+import {randomUUID} from 'node:crypto'
+import { exist, set } from "../services/index.js";
+
+export const userBaseKey = ({userId })=>{
+  return `User::${userId.toString()}`
+}
+
+
+
+export const userBaseRevokeTokenKey = ({userId , jti})=>{
+  return `${userBaseKey({userId})}::Revoke_Token`
+}
+
+
+export const userRevokeTokenKey = ({userId , jti})=>{
+  return `${userBaseRevokeTokenKey({userId})}::${jti}`
+}
 
 export const createToken = async ({
 payload={},
@@ -63,12 +80,21 @@ const payload = await verifyToken({
 
 if(!payload?.sub) throw BadException("missing token payload")
 
+if(await exist({key:userRevokeTokenKey({userId : payload.sub , jti : payload.jti})})){
+  throw UnauthorizedException("Expired login credentials")
+}
+
 const user = await findById({
   model:UserModel,
   id:payload.sub
 })
 
 if(!user) throw NotfoundException("Invalid user")
+
+console.log({change:user.changeCredentialsTime?.getTime() , iat:payload.iat*1000} );
+if((user.changeCredentialsTime?.getTime() ?? 0) > payload.iat*1000){
+  throw UnauthorizedException("Expired login credentials")
+}
 return {user , payload}
 
 }
@@ -87,7 +113,7 @@ export const createLoginCredentials = async({
 })=>{
 
   const {accessSignature , refreshSignature} = await getTokenSignatures({role : user.role})
-
+  const jwtid = randomUUID()
   const access_token = await createToken({
     payload:{sub : user._id},
     secret_key:accessSignature,
@@ -95,7 +121,8 @@ export const createLoginCredentials = async({
       ...options,
       issuer,
       audience:[user.role],
-       expiresIn:ACCESS_TOKEN_EXPIRES_IN
+       expiresIn:ACCESS_TOKEN_EXPIRES_IN,
+       jwtid
       }
   })
   
@@ -106,7 +133,8 @@ export const createLoginCredentials = async({
        ...options,
        issuer,
        audience:[user.role],
-       expiresIn:REFRESH_TOKEN_EXPIRES_IN
+       expiresIn:REFRESH_TOKEN_EXPIRES_IN,
+       jwtid
       },
      
   })
@@ -116,7 +144,14 @@ export const createLoginCredentials = async({
 }
 
 
-
+export const createRevokeToken = async({payload})=>{
+  const consumedTime = (Math.ceil(Date.now() /1000) -payload.iat)
+  const refreshExpiredIn = payload.iat + REFRESH_TOKEN_EXPIRES_IN
+  const ttl = refreshExpiredIn - consumedTime
+  console.log({payload , consumedTime , refreshExpiredIn , ttl});
+  await set({key:userRevokeTokenKey({userId:payload.sub , jti:payload.jti}) , value:payload.jti , ttl })
+  return;
+}
 
 
 
@@ -132,3 +167,6 @@ if(!match) throw NotfoundException("not Exist")
 return await account
 
 }
+
+
+

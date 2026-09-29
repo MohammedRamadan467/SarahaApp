@@ -21,7 +21,9 @@ return successResponse({res , status:status , data})
 
 router.post("/login" , validation(validators.login),async (req,res,next)=>{ 
 
-const data = await login(req.validate , `${req.protocol}://${req.host}`)
+const data = await login(req.validate.body , `${req.protocol}://${req.host}`)
+console.log(req.validate);
+
 return successResponse({res , data})
 
 })

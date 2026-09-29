@@ -1,26 +1,36 @@
-import {email, z} from "zod";
+import {z} from "zod";
+import { generalValidationFields } from "../../common/validation.js";
 
-export const login = z.strictObject({
-    email:z.email(),
-    password:z.string().min(8).max(16)
+export const loginSchema = (lang)=>{
+    return z.strictObject({
+    email:generalValidationFields.email(lang),
+    password:generalValidationFields.password(lang)
 })
+}
 
 
-export const signup = login.safeExtend({
-    username:z.string(),
-    phone:z.e164(),
-    confirmPassword:z.string().min(8).max(16)
 
+export const login = (lang)=>{
+     return z.object({
+    body:loginSchema(lang),
+})
+}
+
+
+
+
+export const signup = (lang)=>{
+
+    return  z.object({
+    body: loginSchema(lang).safeExtend({
+    username:generalValidationFields.username(lang),
+    phone:generalValidationFields.phone(lang),
+    confirmPassword:generalValidationFields.password(lang),
 }).superRefine((data , ctx)=>{
 console.log({data , ctx});
 
-if (data.password != data.confirmPassword) {
-    ctx.addIssue({
-        code:"custom",
-        path:['confirmPassword'],
-        message :"password mismatch with confirmation password"
-    })
-}
+generalValidationFields.matchFields({original:"password" , copy :"confirmPassword" , data , ctx , lang})
+
 
 if (!data.username.includes(" ")) {
     ctx.addIssue({
@@ -30,6 +40,8 @@ if (!data.username.includes(" ")) {
     })
 }
 })
+})
+}
 
 
 

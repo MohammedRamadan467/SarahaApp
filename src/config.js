@@ -23,3 +23,4 @@ export const REFRESH_TOKEN_EXPIRES_IN=parseInt(process.env.REFRESH_TOKEN_EXPIRES
 
 export const WEB_CLIENT_IDS = process.env.WEB_CLIENT_IDS.split(",")
 
+export const REDIS_URI = process.env.REDIS_URI
