@@ -53,7 +53,7 @@ export const logout = async (payload , user , {action=LogoutEnum.DEVICE})=>{
       break;
   
     default:
-      createRevokeToken({payload})
+      await createRevokeToken({payload})
       break;
   }
   return

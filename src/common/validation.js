@@ -85,6 +85,7 @@ export const generalValidationFields = {
             message: getValidationMessages(lang, 101)
         }),
 
+     otp: (lang) => z.string().regex(/^\d{6}$/ , {error:"Invalid code"}),
 
     password: (lang) =>
         z.string().regex(/^(?=.*[a-z])(?=.*\s{0,})(?=.*[A-Z])(?=.*\d)(?=.*[!@#%$_&*()]).{8,16}$/ )

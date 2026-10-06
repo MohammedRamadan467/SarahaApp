@@ -5,16 +5,8 @@ export const ApplicationException = ({
     issues = undefined
 } = {}) => {
 
-    const error = new Error(message);
-
-    error.cause = {
-        status,
-        issues
-    };
-
-    throw error;
-};
-
+    throw new Error(message , {cause:{status , issues}})
+}
 
 export const ConflictException = (message="conflict" ,issues= undefined)=>{
    return ApplicationException({
@@ -24,6 +16,14 @@ export const ConflictException = (message="conflict" ,issues= undefined)=>{
 })
 }
 
+
+export const TooManyRequestException = (message="Too Many Request Exception" ,issues= undefined)=>{
+   return ApplicationException({
+    message,
+    status:409,
+    issues
+})
+}
 
 
 export const NotfoundException = (message="Notfound" , issues= undefined)=>{

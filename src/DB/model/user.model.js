@@ -48,10 +48,10 @@ provider:{
     enum:Object.values(ProviderEnum),
     default:ProviderEnum.SYSTEM
 },
-changeCredentialsTime: Date
-
-
-
+changeCredentialsTime: Date,
+twoStepVerification:Date
+ 
+ 
 },
 {
 timestamps:true,

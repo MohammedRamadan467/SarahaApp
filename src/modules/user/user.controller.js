@@ -4,11 +4,25 @@ import { logout, profile, rotateToken, update } from './user.service.js';
 import { authentication, authorization } from '../../middleware/authentication.middleware.js';
 import { tokenTypeEnum } from '../../common/enum/security.enum.js';
 import { RoleEnum } from '../../common/enum/user.enum.js';
+import { fileValidation, localFielupload } from '../../common/utlis/index.js';
+import { uploadMiddleware } from '../../middleware/index.js';
 const router = Router();
 
 router.get("/" , authentication(),async (req,res,next)=>{
 const data = await profile(req.user)
  return successResponse({res , data})
+})
+
+
+router.patch
+("/profile-image" ,
+      authentication() ,
+       uploadMiddleware({multerMiddleware: localFielupload({maxFileSize : 2 }).single("attachment") , customPath :"users" , validation : fileValidation.image }) ,
+
+         async (req,res,next)=>{
+     req.user.image = req.file.finalPath
+     await req.user.save()
+     return successResponse({res , data:{user : req.user}})
 })
 
 

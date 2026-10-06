@@ -15,7 +15,7 @@ export const userBaseKey = ({userId })=>{
 
 
 
-export const userBaseRevokeTokenKey = ({userId , jti})=>{
+export const userBaseRevokeTokenKey = ({userId})=>{
   return `${userBaseKey({userId})}::Revoke_Token`
 }
 

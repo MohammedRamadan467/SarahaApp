@@ -4,13 +4,11 @@ import express from 'express'
 import { PORT } from './config.js'
 import { bootstarpDB } from './DB/connection.db.js'
 import cors from 'cors'
-import { client } from './DB/model/redis.connection.js'
-import { del, exist, get, keys, mget, set, ttl, update } from './common/services/index.js'
 const app = express()
 await bootstarpDB(app,PORT)
 
 app.use(cors())
-
+app.use("/assets" , express.static("./assets"))
 // convert buffer data
 app.use(express.json())
 
@@ -20,7 +18,7 @@ res.status(200).json({message:"Welcome Application routing 💕"})
 } 
 )
 
-app.use("/auth",authenticationController)
+app.use("/auth",authenticationController) 
 app.use("/message",messageController)
 app.use("/user",userController)
 
@@ -30,3 +28,12 @@ app.all("{/*dummy}" ,(req,res,next)=>{
 
 // error middleware
 app.use(globalErrorHandling);
+
+
+
+
+
+
+
+
+

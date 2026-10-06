@@ -12,11 +12,11 @@ export const validation = (schema)=>{
         query:req.query,
         params:req.params
        })
-       console.log({validationResult});
+      //  console.log({validationResult});
        if(!validationResult.success) throw BadException("validation Error" , validationResult.error.issues)
 
          req.validate = validationResult.data
-         console.log({v:req.validate});
+        //  console.log({v:req.validate});
          
          next()
     }

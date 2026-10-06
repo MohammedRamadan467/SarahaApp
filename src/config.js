@@ -24,3 +24,9 @@ export const REFRESH_TOKEN_EXPIRES_IN=parseInt(process.env.REFRESH_TOKEN_EXPIRES
 export const WEB_CLIENT_IDS = process.env.WEB_CLIENT_IDS.split(",")
 
 export const REDIS_URI = process.env.REDIS_URI
+export const APP_EMAIL = process.env.APP_EMAIL
+export const APP_PASSWORD = process.env.APP_PASSWORD
+
+export const FACEBOOK = process.env.FACEBOOK
+export const TWITTER = process.env.TWITTER
+export const INSTAGRAM = process.env.INSTAGRAM
