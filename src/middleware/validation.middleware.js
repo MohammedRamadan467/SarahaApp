@@ -5,6 +5,7 @@ import { BadException } from "../common/exceptions/error.exception.js";
 export const validation = (schema)=>{
     return (req , res , next)=>{
       const lang = Number(req.headers['accept-language'] ?? LanguageEnum.EN)
+      console.log({body :req.body , files:req.files});
       
        const validationResult = schema(lang).safeParse({
         body:req.body,

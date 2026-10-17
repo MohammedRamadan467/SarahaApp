@@ -8,6 +8,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 
 import { generateLimiter } from './common/utlis/limiter.js'
+import { conversationController } from './modules/conversation/index.js'
 const app = express()
 await bootstarpDB(app,PORT)
 
@@ -37,6 +38,7 @@ app.use("/auth",authenticationController)
 app.use("/message",messageController)
 app.use("/user",userController)
 app.use("/request",requestController)
+app.use("/conversation",conversationController)
 
 
 app.all("{/*dummy}" ,(req,res,next)=>{
