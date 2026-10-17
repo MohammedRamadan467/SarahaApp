@@ -1,7 +1,7 @@
 import {z} from "zod"
 import { GenderEnum } from "./enum/user.enum.js"
 import { LanguageEnum } from "./enum/security.enum.js"
-import { error } from "node:console"
+import mongoose from "mongoose"
 
 
 const validationMessages = {
@@ -49,6 +49,11 @@ const validationMessages = {
     109: {
         ar: "البيانات غير متطابقة",
         en: "Fields do not match"
+    },
+
+    110: {
+        ar: "اي دي الإلكتروني غير صحيح",
+        en: "Invalid id format"
     }
 }
 
@@ -56,6 +61,8 @@ const validationMessages = {
 const getValidationMessages = (lang , code)=>{
 return lang == LanguageEnum.AR ? validationMessages[code].ar : validationMessages[code].en
 }
+
+
 
 export const matchFields = ({
     original,
@@ -79,6 +86,8 @@ export const matchFields = ({
 
 
 export const generalValidationFields = {
+
+    matchFields,
 
     email: (lang) =>
         z.email({
@@ -128,7 +137,17 @@ export const generalValidationFields = {
             message: getValidationMessages(lang, 107)
         }),
 
+    id: (lang)=> z.string().refine((data)=>{return mongoose.Types.ObjectId.isValid(data)} , {message: getValidationMessages(lang , 110)}),
 
-    matchFields
+    file: (lang)=> z.strictObject({
+            fieldname: z.string(),
+            originalname: z.string(),
+            encoding: z.string(),
+            mimetype: z.string(),
+            buffer: z.instanceof(Buffer),
+            size: z.number(),
+            path: z.string(),
+        }),
+
 
 }

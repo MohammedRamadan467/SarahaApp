@@ -4,7 +4,6 @@ import { resolve } from "node:path";
 import {mkdir, unlink, writeFile} from 'node:fs/promises'
 import {fileTypeFromBuffer} from 'file-type'
 import { BadException } from "../../exceptions/error.exception.js";
-import { error } from "node:console";
 
 export const fileValidation = {
     image:['image/jpeg' , 'image/png' , 'image/gif'],
@@ -33,9 +32,9 @@ export const proccessFile = async ({customPath = "general" , file , validation =
 
             await mkdir(resolve(`./assets/${customPath}`) , {recursive : true})
            const uniqueFilepath = `assets/${customPath}/${randomUUID()}.${result.ext}`
-           await writeFile(resolve(`./${uniqueFilepath}` , file.buffer))
+           await writeFile(resolve(`./${uniqueFilepath}`), file.buffer)
 
-           file.finalPath = uniqueFilepath
+           file.path = uniqueFilepath
            return file
         }
 
@@ -108,85 +107,3 @@ export const proccessMulterUpload = async ({req , customPath = "general", valida
 
        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export const proccessFile = ({validation = []})=>{
-//     return async (req , res , next)=>{
-//         const filepath = resolve(`./${file.path}`)
-//         console.log({f:file , filepath});
-//         const fileBuffer = await readFile(filepath)
-//         console.log({fileBuffer});
-//         const result = await fileTypeFromBuffer(fileBuffer)
-//         console.log({result});
-        
-
-//         if(!result || !validation.includes(result.mime)) {
-//             await unlink(filepath)
-//             next(new Error("Invalid file formats" , {cause:{status:400}} ))
-//         }
-
-//         next()
-
-//     }
-// }

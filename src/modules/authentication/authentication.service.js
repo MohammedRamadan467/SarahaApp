@@ -1,5 +1,4 @@
-import { createOne, findOne } from "../../common/repository/base.repository.js"
-import { UserModel } from "../../DB/model/user.model.js"
+import { createOne, findOne } from "../../common/repository/user.repository.js"
 import { BadException, ConflictException, NotfoundException, TooManyRequestException } from "../../common/exceptions/error.exception.js"
 import { compare, hash } from "../../common/security/hash.security.js"
 import { encryption } from "../../common/security/encryption.security.js"
@@ -31,14 +30,10 @@ async function verifyGoogleAccount(idToken) {
 
 export const signupWithGmail = async ({idToken , issuer})=>{
 
-console.log({idToken});
-
 const {name , email , picture} = await verifyGoogleAccount(idToken)
-console.log({name , email , picture});
 
 let status = 201;
 const existAccount = await findOne({
-    model:UserModel,
     filter:{email}
 })
 
@@ -50,7 +45,6 @@ if (existAccount) {
     return {status:201  , data: await createLoginCredentials({user:existAccount , issuer})}
 }
  const user = await createOne({
-    model:UserModel,
     data:{
         username:name,
         email,
@@ -104,15 +98,13 @@ return  {status:200  , data:await createLoginCredentials({user:existAccount , is
 export const signup = async ({email , password , username , phone})=>{
 
 const duplicatedAccount = await findOne({
-    model:UserModel ,
      filter:{email} ,
       options:{select:"email"}
     })
 
 if(duplicatedAccount) throw ConflictException("Email exists")
 
-const account = await createOne({
-    model:UserModel ,         
+const account = await createOne({       
      data:{
         email ,
          password:await hash(password),
@@ -130,7 +122,6 @@ return account
 export const resendConfirmEmail = async ({email})=>{
 
 const account = await findOne({
-    model:UserModel ,
      filter:{email , provider:ProviderEnum.SYSTEM , confirmEmail: {$exists:false}} ,
       options:{select:"email"}
     })
@@ -147,7 +138,6 @@ return
 export const confirmEmail = async ({email , otp})=>{
 
 const account = await findOne({
-    model:UserModel ,
      filter:{email , provider:ProviderEnum.SYSTEM , confirmEmail: {$exists:false}} ,
       options:{select:"email"}
     })
@@ -175,7 +165,6 @@ return
 export const requestForgotPasswordCode = async ({email})=>{
 
 const account = await findOne({
-    model:UserModel ,
      filter:{email , provider:ProviderEnum.SYSTEM , confirmEmail: {$exists:true}} ,
       options:{select:"email"}
     })
@@ -192,7 +181,6 @@ return
 export const verifyForgotPasswordCode = async ({email , otp})=>{
 
 const account = await findOne({
-    model:UserModel ,
      filter:{email , provider:ProviderEnum.SYSTEM , confirmEmail: {$exists:true}} ,
       options:{select:"email"}
     })
@@ -238,7 +226,6 @@ await del({
 export const enable_2_step_verification = async ({email})=>{
 
 const account = await findOne({
-    model:UserModel ,
      filter:{email , provider:ProviderEnum.SYSTEM , confirmEmail: {$exists:true}} ,
       options:{select:"email"}
     })
@@ -256,7 +243,6 @@ return
 export const confirm_2_step_verification = async ({email , otp})=>{
 
 const account = await findOne({
-    model:UserModel ,
      filter:{email , provider:ProviderEnum.SYSTEM , twoStepVerification: {$exists:false}} ,
       options:{select:"email"}
     })
@@ -289,7 +275,6 @@ const oldTrials = await get({key: loginTrialsKey({email})}) ?? 0;
 
 
 const account = await findOne({
-    model:UserModel , 
     filter:{email , provider:ProviderEnum.SYSTEM , confirmEmail:{$exists: true}} 
 })
 if(!account) throw  NotfoundException("not Exist")
@@ -324,7 +309,6 @@ return await createLoginCredentials({user:account , issuer})
 export const confirmationLogin = async ({email , otp} , issuer)=>{
 
 const account = await findOne({
-    model:UserModel ,
      filter:{email , provider:ProviderEnum.SYSTEM , confirmEmail: {$exists:true}} ,
       options:{select:"email"}
     })

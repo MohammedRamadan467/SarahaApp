@@ -91,7 +91,6 @@ const user = await findById({
 
 if(!user) throw NotfoundException("Invalid user")
 
-console.log({change:user.changeCredentialsTime?.getTime() , iat:payload.iat*1000} );
 if((user.changeCredentialsTime?.getTime() ?? 0) > payload.iat*1000){
   throw UnauthorizedException("Expired login credentials")
 }
@@ -138,7 +137,6 @@ export const createLoginCredentials = async({
       },
      
   })
-  console.log({accessSignature , refreshSignature});
   
   return {access_token , refresh_token}
 }
@@ -148,7 +146,6 @@ export const createRevokeToken = async({payload})=>{
   const consumedTime = (Math.ceil(Date.now() /1000) -payload.iat)
   const refreshExpiredIn = payload.iat + REFRESH_TOKEN_EXPIRES_IN
   const ttl = refreshExpiredIn - consumedTime
-  console.log({payload , consumedTime , refreshExpiredIn , ttl});
   await set({key:userRevokeTokenKey({userId:payload.sub , jti:payload.jti}) , value:payload.jti , ttl })
   return;
 }

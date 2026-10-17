@@ -20,7 +20,7 @@ export const ConflictException = (message="conflict" ,issues= undefined)=>{
 export const TooManyRequestException = (message="Too Many Request Exception" ,issues= undefined)=>{
    return ApplicationException({
     message,
-    status:409,
+    status:429,
     issues
 })
 }

@@ -30,3 +30,5 @@ export const APP_PASSWORD = process.env.APP_PASSWORD
 export const FACEBOOK = process.env.FACEBOOK
 export const TWITTER = process.env.TWITTER
 export const INSTAGRAM = process.env.INSTAGRAM
+
+export const ORIGINS = process.env.ORIGINS.split(",")

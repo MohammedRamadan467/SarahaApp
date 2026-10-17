@@ -3,7 +3,9 @@ import { successResponse } from '../../common/utlis/success.response.js';
 import { confirm_2_step_verification, confirmationLogin, confirmEmail, enable_2_step_verification, login, requestForgotPasswordCode, resendConfirmEmail, resetForgotPassword, signup, signupWithGmail, verifyForgotPasswordCode } from './authentication.service.js';
 import * as validators from './authentication.validation.js'
 import { validation } from '../../middleware/validation.middleware.js';
-const router = Router();
+import { del } from '../../common/services/cache.service.js';
+import { generateLimiter } from '../../common/utlis/limiter.js';
+const router = Router({caseSensitive:true , strict:true});
 
 router.post("/signup" , validation(validators.signup), async(req,res,next)=>{
 
@@ -64,10 +66,16 @@ const data = await confirm_2_step_verification(req.body)
 return successResponse({res , status:201 , data})
 })
 
+const loginLimiter = generateLimiter({
+    ttl:5,
+    limit:5,
+    skipSuccessfulRequests : true
+})
 
-router.post("/login" , validation(validators.login),async (req,res,next)=>{ 
+router.post("/login" , loginLimiter ,  validation(validators.login),async (req,res,next)=>{ 
 
 const data = await login(req.validate.body , `${req.protocol}://${req.host}`)
+await del({key : req.rateLimit.key})
 return successResponse({res , data})
 
 })

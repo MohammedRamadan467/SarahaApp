@@ -52,6 +52,10 @@ export const find = async ({
   if (options?.lean) {
     doc.lean(options.lean);
   }
+
+  if (options?.sort) {
+    doc.sort(options.sort);
+  }
   return await doc.exec();
 }
 
@@ -108,6 +112,10 @@ export const paginate = async ({
 
     docsCount = await model.countDocuments(filter);
     pages = Math.ceil(docsCount / options.limit);
+
+    if (page > pages && pages > 0) {
+    throw new Error("Page not found");
+}
   }
   const result = await find({ model, filter, select, options });
   return {

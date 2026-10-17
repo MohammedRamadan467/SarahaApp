@@ -34,8 +34,6 @@ const data = await update(req.user , req.body)
 
 router.post("/rotate-token" , authentication(tokenTypeEnum.REFRESH),async (req,res,next)=>{
 const data = await rotateToken(req.payload , req.user , `${req.protocol}://${req.host}`)
-console.log(req.payload);
-
  return successResponse({res , data})
 })
 
@@ -44,8 +42,6 @@ console.log(req.payload);
 
 router.post("/logout" , authentication(),async (req,res,next)=>{
 const data = await logout(req.payload , req.user, req.body)
-console.log(req.payload);
-
  return successResponse({res , data})
 })
 

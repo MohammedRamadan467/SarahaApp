@@ -27,10 +27,8 @@ export const signup = (lang)=>{
     phone:generalValidationFields.phone(lang),
     confirmPassword:generalValidationFields.password(lang),
 }).superRefine((data , ctx)=>{
-console.log({data , ctx});
 
 generalValidationFields.matchFields({original:"password" , copy :"confirmPassword" , data , ctx , lang})
-
 
 if (!data.username.includes(" ")) {
     ctx.addIssue({
@@ -105,17 +103,10 @@ export const veriryForgotPassword = (lang)=>{
         password:generalValidationFields.password(lang),
         confirmPassword:generalValidationFields.password(lang),
 }).superRefine((data , ctx)=>{
-console.log({data , ctx});
 
 generalValidationFields.matchFields({original:"password" , copy :"confirmPassword" , data , ctx , lang})
 
 })})
 }
-
-
-// .refine((data)=>{
-// console.log(data);
-// return data.password === data.confirmPassword
-// },{message:"password mismatch with confirmation password"})
 
 

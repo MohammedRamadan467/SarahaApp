@@ -71,4 +71,7 @@ this.set({firstName , lastName})
     return `${this.firstName} ${this.lastName}`
 })
 
+
+
+
 export const UserModel = mongoose.models.User || mongoose.model("User",userSchema)
